@@ -42,3 +42,21 @@ Project\ Backups
 
 ## Ignore MATLAB autosave files
 *.asv
+Basic/Student1/firmware/firmware/uart.h
+Basic/Student1/firmware/firmware/uart.c
+Basic/Student1/firmware/firmware/timer0.h
+Basic/Student1/firmware/firmware/timer0.c
+Basic/Student1/firmware/firmware/report.h
+Basic/Student1/firmware/firmware/report.c
+Basic/Student1/firmware/firmware/pins.h
+Basic/Student1/firmware/firmware/measure.h
+Basic/Student1/firmware/firmware/measure.c
+Basic/Student1/firmware/firmware/main.c
+Basic/Student1/firmware/firmware/dsp.h
+Basic/Student1/firmware/firmware/dsp.c
+Basic/Student1/firmware/firmware/display.h
+Basic/Student1/firmware/firmware/display.c
+Basic/Student1/firmware/firmware/common.h
+Basic/Student1/firmware/firmware/calib.h
+Basic/Student1/firmware/firmware/adc.h
+Basic/Student1/firmware/firmware/adc.c
