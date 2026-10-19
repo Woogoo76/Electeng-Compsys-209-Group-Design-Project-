@@ -11,16 +11,16 @@
 #define ADC_VREF_V    5.0f                   /* ADC reference (AVcc), volts            */
 #define ADC_STEPS     1024.0f                /* 10-bit ADC: counts per full scale      */
 
-#define VDIV_RA_OHM   56000.0f               /* voltage divider top resistor (Lab 1)   */
-#define VDIV_RB_OHM   2700.0f                /* voltage divider bottom resistor        */
+#define VDIV_RA_OHM   56330.0f               /* voltage divider top resistor (Lab 1)   */
+#define VDIV_RB_OHM   2703.0f                /* voltage divider bottom resistor        */
 #define V_AMP_GAIN    1.0f                   /* voltage diff-amp gain (Lab 3)          */
 
-#define RSHUNT_OHM    0.5f                   /* current shunt (Lab 1)                  */
-#define I_AMP_GAIN    (68000.0f / 30000.0f)  /* current diff-amp gain R2/R1 (Lab 3)    */
+#define RSHUNT_OHM    0.665f                   /* current shunt (Lab 1)                  */
+#define I_AMP_GAIN    (68170.0f / 29900.0f)  /* current diff-amp gain R2/R1 (Lab 3)    */
 #define I_SENSE_SIGN  1.0f                   /* set -1.0f if power reads negative      */
 
 #define V_TRIM        1.0f                   /* multimeter calibration factor, voltage */
-#define I_TRIM        1.0f                   /* multimeter calibration factor, current */
+#define I_TRIM        1.04f                   /* multimeter calibration factor, current */
 
 /* Source volts / amps per ADC count (AC-coupled, so DC offset drops out) */
 #define VOLTS_PER_COUNT ((ADC_VREF_V / ADC_STEPS) * ((VDIV_RA_OHM + VDIV_RB_OHM) / VDIV_RB_OHM) / V_AMP_GAIN * V_TRIM)
