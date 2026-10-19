@@ -15,7 +15,7 @@
 
 /* ---- Build options (1 = on, 0 = off) ---- */
 #define DEBUG_PINS            0  /* 1: SoC (PB2) + EoC (PB5) pin toggles for the test record */
-#define DUMP_RAW_FIRST_WINDOW 1  /* 1: print first raw ADC window over UART (paste into Excel) */
+#define DUMP_RAW_FIRST_WINDOW 0  /* 1: print first raw ADC window over UART (paste into Excel) */
 #define UART_PRINT_ENERGY     0  /* 1: also print "Energy is: ..." after the three lines */
 
 /* UART assessment test: 1 = print/display the fixed values below instead of measurements.
@@ -26,8 +26,8 @@
 #define Power        1.60        /* X.XX */
 
 /* ---- Timing of the main loop ---- */
-#define SCROLL_MS            1000UL   /* 7-seg scroll period (spec: 1 s)             */
-#define UART_PERIOD_MS       1000UL   /* UART report period                          */
+#define SCROLL_MS            1000UL   /* each quantity is latched and shown this long;
+                                         the UART block is printed once per slot too   */
 #define STARTUP_SKIP_WINDOWS 2        /* ignore first ADC windows (Proteus start-up) */
 
 /* ---- Shared constants ---- */
