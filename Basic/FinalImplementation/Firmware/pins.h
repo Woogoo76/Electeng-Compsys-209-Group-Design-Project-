@@ -47,7 +47,7 @@ static inline void pin_write(const pin_t *pin, uint8_t high)
     else      *pin->port &= (uint8_t)~pin->mask;
 }
 
-/* ---- ADC channels (Lab 4: ADC0 = voltage signal, ADC1 = current signal) ---- */
+/* ---- ADC channels (Lab 4: ADC1 = voltage signal, ADC0 = current signal) ---- */
 #define ADC_CH_V 1
 #define ADC_CH_I 0
 

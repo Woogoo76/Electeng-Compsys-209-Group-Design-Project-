@@ -1,13 +1,6 @@
-/*
- * GccApplication3.c
- *
- * Created: 14/10/2026 11:35:50 am
- * Author : Team 23
- */ 
-
 /**
  * @file    main.c
- * @brief   ELECTENG209 energy monitor firmware
+ * @brief   ELECTENG209 energy monitor firmware - state machine only.
  *
  * Data flow:
  *   Timer1 (125 us) -> starts each ADC conversion -> ADC ISR fills the V/I buffers
@@ -34,7 +27,8 @@ typedef enum { ST_INIT, ST_WAIT, ST_PROCESS, ST_REPORT, ST_REARM } state_t;
 static meas_t   g_meas;                              /* smoothed measurement result       */
 static float    g_energy_wh;                         /* accumulated energy, Wh            */
 static uint32_t g_last_energy_ms;                    /* time of the last energy update    */
-static uint32_t g_last_uart_ms;                      /* time of the last UART report      */
+static uint32_t g_slot;                              /* 1 s slot that is being shown      */
+static uint8_t  g_have_slot;                         /* 1 once a slot has been latched    */
 static uint8_t  g_have_data;                         /* 1 once a valid result exists      */
 static uint8_t  g_skip_windows = STARTUP_SKIP_WINDOWS;  /* windows still to ignore        */
 
@@ -82,36 +76,41 @@ static void do_process(void)
 }
 
 /**
- * @brief  Update the 7-segment display (scrolls V -> I -> P every SCROLL_MS) and send the
- *         UART report every UART_PERIOD_MS. With USE_TEST_VALUES the fixed test values
- *         from common.h are shown instead of the measurement.
+ * @brief  Latch the result once per SCROLL_MS slot and show it for the whole slot.
+ *         At the start of each slot, V -> I -> P takes turns on the 7-segment display
+ *         and one UART block is printed. The values do not change again until the
+ *         next slot, so the readings stay steady for a full second.
+ *         With USE_TEST_VALUES the fixed test values from common.h are used instead
+ *         of the measurement.
  * @param  none
  * @return none
  */
 static void do_report(void)
 {
-    uint32_t now = timer0_ms();
-    float vals[DISP_COUNT];                  /* indexed by disp_quantity_t: V, mA, W */
+    uint32_t slot = timer0_ms() / SCROLL_MS;      /* 0, 1, 2 ... one per second */
+    float vals[DISP_COUNT];                       /* indexed by disp_quantity_t: V, mA, W */
+
+    if (g_have_slot && slot == g_slot) return;    /* still inside the held second */
 
 #if USE_TEST_VALUES
     vals[DISP_VOLT]    = RMSVoltage;
     vals[DISP_CURRENT] = PeakCurrent;
     vals[DISP_POWER]   = Power;
 #else
-    if (!g_have_data) return;                /* nothing valid to show yet */
+    if (!g_have_data) return;                     /* nothing valid to show yet */
     for (uint8_t k = 0; k < DISP_COUNT; k++) vals[k] = g_meas.q[k];
 #endif
 
-    disp_quantity_t q = (disp_quantity_t)((now / SCROLL_MS) % DISP_COUNT);
-    display_show_quantity(q, vals[q]);
+    disp_quantity_t q = (disp_quantity_t)(slot % DISP_COUNT);
+    display_show_quantity(q, vals[q]);            /* latched: shown for this whole slot */
 
-    if (now - g_last_uart_ms >= UART_PERIOD_MS) {
-        readout_print(vals[DISP_VOLT], vals[DISP_CURRENT], vals[DISP_POWER]);
+    readout_print(vals[DISP_VOLT], vals[DISP_CURRENT], vals[DISP_POWER]);
 #if UART_PRINT_ENERGY
-        readout_print_energy(g_energy_wh);
+    readout_print_energy(g_energy_wh);
 #endif
-        g_last_uart_ms = now;
-    }
+
+    g_slot = slot;
+    g_have_slot = 1;
 }
 
 /**
